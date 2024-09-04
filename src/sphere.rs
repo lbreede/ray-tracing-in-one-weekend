@@ -3,16 +3,17 @@ use crate::interval::Interval;
 use crate::material::Material;
 use crate::ray::Ray;
 use nalgebra::Vector3;
+use std::sync::Arc;
 
 pub struct Sphere {
     center: Vector3<f32>,
     radius: f32,
-    mat: Box<dyn Material>,
+    mat: Arc<dyn Material>,
 }
 
 impl Sphere {
     /// Creates a new sphere from with a given position, size and material.
-    pub fn new(center: Vector3<f32>, radius: f32, mat: Box<dyn Material>) -> Self {
+    pub fn new(center: Vector3<f32>, radius: f32, mat: Arc<dyn Material>) -> Self {
         Self {
             center,
             radius,
@@ -43,7 +44,7 @@ impl Hittable for Sphere {
             }
         }
 
-        let mut rec = HitRecord::new(r.at(root), root, self.mat.clone());
+        let mut rec = HitRecord::new(r.at(root), root, Arc::clone(&self.mat));
         let outward_normal = (rec.p - self.center) / self.radius;
         rec.set_face_normal(&r, outward_normal);
         Some(rec)

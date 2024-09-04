@@ -11,6 +11,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
+    /// Creates a new sphere from with a given position, size and material.
     pub fn new(center: Vector3<f32>, radius: f32, mat: Box<dyn Material>) -> Self {
         Self {
             center,
@@ -21,7 +22,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, ray_t: Interval, rec: &mut HitRecord) -> bool {
+    fn hit(&self, r: &Ray, ray_t: Interval) -> Option<HitRecord> {
         let oc = self.center - r.origin;
         let a = r.direction.magnitude_squared();
         let h = r.direction.dot(&oc);
@@ -29,7 +30,7 @@ impl Hittable for Sphere {
 
         let discriminant = h * h - a * c;
         if discriminant < 0.0 {
-            return false;
+            return None;
         }
 
         let sqrtd = discriminant.sqrt();
@@ -38,16 +39,13 @@ impl Hittable for Sphere {
         if !ray_t.surrounds(root) {
             root = (h + sqrtd) / a;
             if !ray_t.surrounds(root) {
-                return false;
+                return None;
             }
         }
-        rec.t = root;
 
-        rec.p = r.at(rec.t);
+        let mut rec = HitRecord::new(r.at(root), root, self.mat.clone());
         let outward_normal = (rec.p - self.center) / self.radius;
-        rec.set_face_normal(r, outward_normal);
-        rec.mat = self.mat.clone();
-
-        true
+        rec.set_face_normal(&r, outward_normal);
+        Some(rec)
     }
 }

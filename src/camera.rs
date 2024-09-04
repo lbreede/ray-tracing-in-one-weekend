@@ -1,12 +1,13 @@
 use crate::color::write_color;
-use crate::hittable::{HitRecord, Hittable};
+use crate::hittable::Hittable;
 use crate::interval::Interval;
 use crate::ray::Ray;
-use crate::vec3::{random_in_unit_disk, sample_square};
+use crate::vec3::{random_float, random_float_range};
 use nalgebra::Vector3;
 use std::time::Instant;
 
 pub struct Camera {
+    // TODO: Remove unnecessary struct members
     // aspect_ratio: f64,
     image_width: u32,
     samples_per_pixel: u32,
@@ -118,7 +119,7 @@ impl Camera {
     }
 
     fn defocus_disk_sample(&self) -> Vector3<f32> {
-        let p = random_in_unit_disk();
+        let p = Camera::random_in_unit_disk();
         self.center + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
     }
 
@@ -154,13 +155,13 @@ impl Camera {
             return Vector3::new(0.0, 0.0, 0.0);
         }
 
-        let mut rec = HitRecord::default();
-
-        if world.hit(&r, Interval::new(0.001, f32::INFINITY), &mut rec) {
-            let mut scattered = Ray::default();
-            let mut attenuation = Vector3::default();
-            if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
-                return attenuation.component_mul(&Camera::ray_color(&scattered, depth - 1, world));
+        if let Some(rec) = world.hit(&r, Interval::new(0.001, f32::INFINITY)) {
+            if let Some(scatter) = rec.mat.scatter(r, &rec) {
+                return scatter.attenuation.component_mul(&Camera::ray_color(
+                    &scatter.scattered,
+                    depth - 1,
+                    world,
+                ));
             }
             return Vector3::new(0.0, 0.0, 0.0);
         }
@@ -171,7 +172,7 @@ impl Camera {
     }
 
     fn get_ray(&self, i: u32, j: u32) -> Ray {
-        let offset = sample_square();
+        let offset = Camera::sample_square();
         let pixel_sample = self.pixel00_loc
             + (i as f32 + offset.x) * self.pixel_delta_u
             + (j as f32 + offset.y) * self.pixel_delta_v;
@@ -181,5 +182,22 @@ impl Camera {
             self.defocus_disk_sample()
         };
         Ray::new(ray_origin, pixel_sample - ray_origin)
+    }
+
+    fn random_in_unit_disk() -> Vector3<f32> {
+        loop {
+            let p = Vector3::new(
+                random_float_range(-1.0, 1.0),
+                random_float_range(-1.0, 1.0),
+                0.0,
+            );
+            if p.magnitude_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
+    fn sample_square() -> Vector3<f32> {
+        Vector3::new(random_float() - 0.5, random_float() - 0.5, 0.0)
     }
 }

@@ -122,6 +122,11 @@ After:
 ```rust
 // src/material.rs
 
+pub struct ScatterResult {
+    pub attenuation: Vector3<f32>,
+    pub scattered: Ray,
+}
+
 fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<ScatterResult> {
     let mut scatter_direction = rec.normal + random_unit_vector();
 

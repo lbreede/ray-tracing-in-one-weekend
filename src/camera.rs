@@ -151,11 +151,11 @@ impl Camera {
         eprintln!("Render Time: {:.2?}\n", elapsed);
     }
     fn ray_color(r: &Ray, depth: u32, world: &mut impl Hittable) -> Vector3<f32> {
-        if depth <= 0 {
+        if depth == 0 {
             return Vector3::new(0.0, 0.0, 0.0);
         }
 
-        if let Some(rec) = world.hit(&r, Interval::new(0.001, f32::INFINITY)) {
+        if let Some(rec) = world.hit(r, Interval::new(0.001, f32::INFINITY)) {
             if let Some(scatter) = rec.mat.scatter(r, &rec) {
                 return scatter.attenuation.component_mul(&Camera::ray_color(
                     &scatter.scattered,

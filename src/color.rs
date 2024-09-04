@@ -22,5 +22,5 @@ pub fn write_color(pixel_color: Vector3<f32>) {
     let gbyte = (256.0 * intensity.clamp(g)) as u8;
     let bbyte = (256.0 * intensity.clamp(b)) as u8;
 
-    print!("{rbyte} {gbyte} {bbyte}\n");
+    println!("{rbyte} {gbyte} {bbyte}");
 }

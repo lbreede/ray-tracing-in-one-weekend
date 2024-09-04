@@ -8,7 +8,7 @@ pub struct ScatterResult {
     pub scattered: Ray,
 }
 
-pub trait Material {
+pub trait Material: Send + Sync {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterResult>;
 }
 
@@ -109,7 +109,7 @@ impl Material for Dielectric {
 }
 
 fn reflect(v: &Vector3<f32>, n: &Vector3<f32>) -> Vector3<f32> {
-    v - 2.0 * v.dot(&n) * n
+    v - 2.0 * v.dot(n) * n
 }
 fn refract(uv: &Vector3<f32>, n: &Vector3<f32>, etai_over_etat: f32) -> Vector3<f32> {
     let cos_theta = -uv.dot(n).min(1.0);

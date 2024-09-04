@@ -1,11 +1,10 @@
-use std::time::Instant;
 use crate::color::write_color;
 use crate::hittable::{HitRecord, Hittable};
 use crate::interval::Interval;
 use crate::ray::Ray;
-use nalgebra::Vector3;
 use crate::vec3::{random_in_unit_disk, sample_square};
-
+use nalgebra::Vector3;
+use std::time::Instant;
 
 pub struct Camera {
     // aspect_ratio: f64,
@@ -17,10 +16,8 @@ pub struct Camera {
     // lookfrom: Vector3<f32>,
     // lookat: Vector3<f32>,
     // vup: Vector3<f32>,
-
     defocus_angle: f32,
     // focus_dist: f32,
-
     image_height: u32,
     pixel_samples_scale: f32,
     center: Vector3<f32>,
@@ -36,7 +33,18 @@ pub struct Camera {
 
 impl Default for Camera {
     fn default() -> Self {
-        Self::new(1.0, 100, 10, 10, 90.0, Vector3::new(0.0,0.0,0.0), Vector3::new(0.0,0.0,-1.0), Vector3::new(0.0,1.0,0.0), 0.0, 10.0)
+        Self::new(
+            1.0,
+            100,
+            10,
+            10,
+            90.0,
+            Vector3::new(0.0, 0.0, 0.0),
+            Vector3::new(0.0, 0.0, -1.0),
+            Vector3::new(0.0, 1.0, 0.0),
+            0.0,
+            10.0,
+        )
     }
 }
 
@@ -65,7 +73,7 @@ impl Camera {
         let viewport_height = 2.0 * h * focus_dist;
         let viewport_width = viewport_height * (image_width as f32 / image_height as f32);
 
-        let w = (lookfrom-lookat).normalize();
+        let w = (lookfrom - lookat).normalize();
         let u = vup.cross(&w).normalize();
         let v = w.cross(&u);
 
@@ -75,11 +83,11 @@ impl Camera {
         let pixel_delta_u = viewport_u / image_width as f32;
         let pixel_delta_v = viewport_v / image_height as f32;
 
-        let viewport_upper_left = center - (focus_dist * w) - viewport_u/2.0 - viewport_v/2.0;
+        let viewport_upper_left = center - (focus_dist * w) - viewport_u / 2.0 - viewport_v / 2.0;
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
         // Calculate the camera defocus disk basis vectors.
-        let defocus_radius = focus_dist * (defocus_angle/2.0).to_radians().tan();
+        let defocus_radius = focus_dist * (defocus_angle / 2.0).to_radians().tan();
         let defocus_disk_u = u * defocus_radius;
         let defocus_disk_v = v * defocus_radius;
 
@@ -93,10 +101,8 @@ impl Camera {
             // lookfrom,
             // lookat,
             // vup,
-
             defocus_angle,
             // focus_dist,
-
             image_height,
             pixel_samples_scale,
             center,
@@ -117,6 +123,7 @@ impl Camera {
     }
 
     pub fn render(&self, world: &mut impl Hittable) {
+        eprintln!("\n=== Render Started ===\n");
         let now = Instant::now();
         print!(
             "P3\n{image_width} {image_height}\n255\n",
@@ -125,7 +132,7 @@ impl Camera {
         );
 
         for j in 0..self.image_height {
-            // eprintln!("\rScanlines remaining: {}", self.image_height-j);
+            eprintln!("Scanlines remaining: {}", self.image_height - j);
             for i in 0..self.image_width {
                 let mut pixel_color = Vector3::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
@@ -176,4 +183,3 @@ impl Camera {
         Ray::new(ray_origin, pixel_sample - ray_origin)
     }
 }
-

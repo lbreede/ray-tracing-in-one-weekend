@@ -12,23 +12,19 @@ use hittable::HittableList;
 use material::{Dielectric, Lambertian, Metal};
 use nalgebra::Vector3;
 use sphere::Sphere;
-use vec3::{random_float, random_vector, random_vector_range,random_float_range};
-
+use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
 fn main() {
     let mut world = HittableList::new();
 
-    let ground_material = Box::new(Lambertian::new(
-        Vector3::new(0.5,0.5,0.5)
-    ));
+    let ground_material = Box::new(Lambertian::new(Vector3::new(0.5, 0.5, 0.5)));
     world.add(Box::new(Sphere::new(
         Vector3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
     )));
 
-
-    for a in -11..11{
+    for a in -11..11 {
         for b in -11..11 {
             let choose_mat = random_float();
             let center = Vector3::new(
@@ -59,17 +55,29 @@ fn main() {
     }
 
     let material1 = Box::new(Dielectric::new(1.5));
-    world.add(Box::new(Sphere::new(Vector3::new(0.0,1.0,0.0), 1.0, material1)));
+    world.add(Box::new(Sphere::new(
+        Vector3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
 
-    let material2 = Box::new(Lambertian::new(Vector3::new(0.4,0.2,0.1)));
-    world.add(Box::new(Sphere::new(Vector3::new(-4.0, 1.0, 0.0), 1.0, material2)));
+    let material2 = Box::new(Lambertian::new(Vector3::new(0.4, 0.2, 0.1)));
+    world.add(Box::new(Sphere::new(
+        Vector3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
 
-    let material3 = Box::new(Metal::new(Vector3::new(0.7,0.6,0.5), 0.0));
-    world.add(Box::new(Sphere::new(Vector3::new(4.0,1.0,0.0), 1.0, material3)));
+    let material3 = Box::new(Metal::new(Vector3::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Box::new(Sphere::new(
+        Vector3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
 
-    let image_width = 400; // 1200
-    let samples_per_pixel = 2; // 500
-    let max_depth = 10; // 50
+    let image_width = 1200; // 1200
+    let samples_per_pixel = 500; // 500
+    let max_depth = 50; // 50
 
     let cam = Camera::new(
         16.0 / 9.0, // 16.0 / 9.0
@@ -78,9 +86,9 @@ fn main() {
         max_depth,
         20.0, // 20.0
         Vector3::new(13.0, 2.0, 3.0),
-        Vector3::new(0.0,0.0,0.0),
-        Vector3::new(0.0,1.0,0.0),
-        0.6, // 0.6
+        Vector3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 1.0, 0.0),
+        0.6,  // 0.6
         10.0, // 10.0
     );
 

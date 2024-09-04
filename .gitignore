@@ -22,3 +22,6 @@ Cargo.lock
 
 # PPM files, because why not. Just convert the ones you like to PNG
 *.ppm
+
+# My archnemesis I banish thee
+.DS_Store

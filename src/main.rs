@@ -76,9 +76,9 @@ fn main() {
         material3,
     )));
 
-    let image_width = 1200; // 1200
-    let samples_per_pixel = 500; // 500
-    let max_depth = 50; // 50
+    let image_width = 400; // 1200
+    let samples_per_pixel = 10; // 500
+    let max_depth = 10; // 50
 
     let cam = Camera::new(
         16.0 / 9.0, // 16.0 / 9.0

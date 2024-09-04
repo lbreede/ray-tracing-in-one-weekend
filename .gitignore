@@ -20,7 +20,7 @@ Cargo.lock
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-# PPM files, because why not. Just convert the ones you like to PNG
+# PPM files, because why not. Just convert the ones you like to PNG or JPG
 *.ppm
 
 # My archnemesis I banish thee

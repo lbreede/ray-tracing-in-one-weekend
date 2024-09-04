@@ -10,8 +10,6 @@ pub struct ScatterResult {
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterResult>;
-
-    fn clone_box(&self) -> Box<dyn Material>;
 }
 
 pub struct Lambertian {
@@ -36,17 +34,6 @@ impl Material for Lambertian {
             attenuation: self.albedo,
             scattered: Ray::new(rec.p, scatter_direction),
         })
-    }
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(self.clone())
-    }
-}
-
-impl Clone for Lambertian {
-    fn clone(&self) -> Self {
-        Self {
-            albedo: self.albedo.clone(),
-        }
     }
 }
 
@@ -75,18 +62,6 @@ impl Material for Metal {
             })
         } else {
             None
-        }
-    }
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(self.clone())
-    }
-}
-
-impl Clone for Metal {
-    fn clone(&self) -> Self {
-        Self {
-            albedo: self.albedo.clone(),
-            fuzz: self.fuzz,
         }
     }
 }
@@ -130,18 +105,6 @@ impl Material for Dielectric {
             attenuation: Vector3::new(1.0, 1.0, 1.0),
             scattered: Ray::new(rec.p, direction),
         })
-    }
-
-    fn clone_box(&self) -> Box<dyn Material> {
-        Box::new(self.clone())
-    }
-}
-
-impl Clone for Dielectric {
-    fn clone(&self) -> Self {
-        Self {
-            refraction_index: self.refraction_index,
-        }
     }
 }
 

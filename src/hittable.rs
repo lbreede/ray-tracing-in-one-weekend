@@ -2,17 +2,18 @@ use crate::interval::Interval;
 use crate::material::Material;
 use crate::ray::Ray;
 use nalgebra::Vector3;
+use std::sync::Arc;
 
 pub struct HitRecord {
     pub p: Vector3<f32>,
     pub normal: Vector3<f32>,
-    pub mat: Box<dyn Material>,
+    pub mat: Arc<dyn Material>,
     pub t: f32,
     pub front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(p: Vector3<f32>, t: f32, mat: Box<dyn Material>) -> Self {
+    pub fn new(p: Vector3<f32>, t: f32, mat: Arc<dyn Material>) -> Self {
         Self {
             p,
             normal: Vector3::new(0.0, 0.0, 0.0),
@@ -34,18 +35,13 @@ impl HitRecord {
     }
 }
 
-impl Clone for Box<dyn Material> {
-    fn clone(&self) -> Box<dyn Material> {
-        self.clone_box()
-    }
-}
 
 pub trait Hittable {
     fn hit(&self, r: &Ray, ray_t: Interval) -> Option<HitRecord>;
 }
 
 pub struct HittableList {
-    objects: Vec<Box<dyn Hittable>>,
+    objects: Vec<Arc<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -55,7 +51,7 @@ impl HittableList {
         }
     }
 
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable>) {
         self.objects.push(object);
     }
 }

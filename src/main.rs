@@ -12,13 +12,14 @@ use hittable::HittableList;
 use material::{Dielectric, Lambertian, Metal};
 use nalgebra::Vector3;
 use sphere::Sphere;
+use std::sync::Arc;
 use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
 fn main() {
     let mut world = HittableList::new();
 
-    let ground_material = Box::new(Lambertian::new(Vector3::new(0.5, 0.5, 0.5)));
-    world.add(Box::new(Sphere::new(
+    let ground_material = Arc::new(Lambertian::new(Vector3::new(0.5, 0.5, 0.5)));
+    world.add(Arc::new(Sphere::new(
         Vector3::new(0.0, -1000.0, 0.0),
         1000.0,
         ground_material,
@@ -37,39 +38,39 @@ fn main() {
                 if choose_mat < 0.8 {
                     // diffuse
                     let albedo = random_vector().component_mul(&random_vector());
-                    let sphere_material = Box::new(Lambertian::new(albedo));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    let sphere_material = Arc::new(Lambertian::new(albedo));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = random_vector_range(0.5, 1.0);
                     let fuzz = random_float_range(0.0, 0.5);
-                    let sphere_material = Box::new(Metal::new(albedo, fuzz));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    let sphere_material = Arc::new(Metal::new(albedo, fuzz));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
-                    let sphere_material = Box::new(Dielectric::new(1.5));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    let sphere_material = Arc::new(Dielectric::new(1.5));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
-    let material1 = Box::new(Dielectric::new(1.5));
-    world.add(Box::new(Sphere::new(
+    let material1 = Arc::new(Dielectric::new(1.5));
+    world.add(Arc::new(Sphere::new(
         Vector3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
-    let material2 = Box::new(Lambertian::new(Vector3::new(0.4, 0.2, 0.1)));
-    world.add(Box::new(Sphere::new(
+    let material2 = Arc::new(Lambertian::new(Vector3::new(0.4, 0.2, 0.1)));
+    world.add(Arc::new(Sphere::new(
         Vector3::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
-    let material3 = Box::new(Metal::new(Vector3::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Box::new(Sphere::new(
+    let material3 = Arc::new(Metal::new(Vector3::new(0.7, 0.6, 0.5), 0.0));
+    world.add(Arc::new(Sphere::new(
         Vector3::new(4.0, 1.0, 0.0),
         1.0,
         material3,

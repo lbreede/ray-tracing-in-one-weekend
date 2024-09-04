@@ -51,6 +51,7 @@ impl Default for Camera {
 
 impl Camera {
     pub fn new(
+        // TODO: This function has too many arugments
         aspect_ratio: f64,
         image_width: u32,
         samples_per_pixel: u32,

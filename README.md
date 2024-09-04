@@ -10,4 +10,6 @@
 
 ## To do
 
-- [ ] Refactor the `Hittable` trait so that `hit()` returns an `Option<HitRecord>` rather that a `bool`
+- [x] Refactor the `Hittable` trait so that `hit()` returns an `Option<HitRecord>` rather than a `bool`
+- [x] Refactor the `Material` trait so that `scatter()` returns an `Option` rather than a `bool`
+- [ ] Consider using an `Arc` instead of a `Box` for materials and hittables

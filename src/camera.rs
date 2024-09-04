@@ -125,7 +125,7 @@ impl Camera {
         );
 
         for j in 0..self.image_height {
-            eprintln!("\rScanlines remaining: {}", self.image_height-j);
+            // eprintln!("\rScanlines remaining: {}", self.image_height-j);
             for i in 0..self.image_width {
                 let mut pixel_color = Vector3::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
@@ -136,7 +136,11 @@ impl Camera {
             }
         }
         let elapsed = now.elapsed();
-        eprintln!("Elapsed: {:.2?}", elapsed);
+        eprintln!("\n=== Render Complete! ===\n");
+        eprintln!("Resolution: {}x{} px", self.image_width, self.image_height);
+        eprintln!("Samples per Pixel: {}", self.samples_per_pixel);
+        eprintln!("Max Depth: {}", self.max_depth);
+        eprintln!("Render Time: {:.2?}\n", elapsed);
     }
     fn ray_color(r: &Ray, depth: u32, world: &mut impl Hittable) -> Vector3<f32> {
         if depth <= 0 {
@@ -172,3 +176,4 @@ impl Camera {
         Ray::new(ray_origin, pixel_sample - ray_origin)
     }
 }
+

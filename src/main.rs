@@ -67,15 +67,15 @@ fn main() {
     let material3 = Box::new(Metal::new(Vector3::new(0.7,0.6,0.5), 0.0));
     world.add(Box::new(Sphere::new(Vector3::new(4.0,1.0,0.0), 1.0, material3)));
 
-    let image_width = 400;
-    let samples_per_pixel = 10;
-    let max_depth = 50;
+    let image_width = 400; // 1200
+    let samples_per_pixel = 2; // 500
+    let max_depth = 10; // 50
 
     let cam = Camera::new(
         16.0 / 9.0, // 16.0 / 9.0
-        image_width, // 1200
-        samples_per_pixel, // 500
-        max_depth, // 50
+        image_width,
+        samples_per_pixel,
+        max_depth,
         20.0, // 20.0
         Vector3::new(13.0, 2.0, 3.0),
         Vector3::new(0.0,0.0,0.0),

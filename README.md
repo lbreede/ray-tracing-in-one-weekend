@@ -112,7 +112,7 @@ fn scatter(
 let mut scattered = Ray::default();
 let mut attenuation = Vector3::default();
 if rec.mat.scatter(r, &rec, &mut attenuation, &mut scattered) {
-    return attenuation.component_mul( & Camera::ray_color(& scattered, depth - 1, world));
+    return attenuation.component_mul(&Camera::ray_color(&scattered, depth - 1, world));
 }
 
 ```
@@ -143,7 +143,7 @@ fn scatter(&self, _r_in: &Ray, rec: &HitRecord) -> Option<ScatterResult> {
 // src/camera.rs
 
 if let Some(scatter) = rec.mat.scatter(r, &rec) {
-    return scatter.attenuation.component_mul( & Camera::ray_color(
+    return scatter.attenuation.component_mul(&Camera::ray_color(
         &scatter.scattered,
         depth - 1,
         world)

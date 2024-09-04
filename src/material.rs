@@ -53,16 +53,12 @@ impl Material for Metal {
         let mut reflected = reflect(&r_in.direction, &rec.normal);
         reflected = reflected.normalize() + self.fuzz * random_unit_vector();
 
-        // TODO: Simplify return for Some and None
-        let scattered = Ray::new(rec.p, reflected);
-        if scattered.direction.dot(&rec.normal) > 0.0 {
-            Some(ScatterResult {
+        Some(Ray::new(rec.p, reflected))
+            .filter(|ray| ray.direction.dot(&rec.normal) > 0.0)
+            .map(|scattered| ScatterResult {
                 attenuation: self.albedo,
                 scattered,
             })
-        } else {
-            None
-        }
     }
 }
 

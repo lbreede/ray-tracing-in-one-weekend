@@ -1,0 +1,9 @@
+[package]
+name = "ray-tracing-in-one-weekend"
+version = "0.1.0"
+edition = "2021"
+authors = ["Lennart Breede"]
+
+[dependencies]
+rand = "0.8.5"
+nalgebra = "0.33.0"

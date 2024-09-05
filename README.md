@@ -15,6 +15,7 @@
 - [x] Consider using an `Arc` instead of a `Box` for materials and hittables
 - [x] Add trait declaration `Send + Sync`
 - [x] Reduce amount of method arguments, possibly using the builder pattern
+- [x] Multi-thread using `rayon`
 
 ## Learnings
 

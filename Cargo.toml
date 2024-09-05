@@ -7,3 +7,4 @@ authors = ["Lennart Breede"]
 [dependencies]
 rand = "0.8.5"
 nalgebra = "0.33.0"
+rayon = "1.10.0"

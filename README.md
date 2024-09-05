@@ -154,3 +154,4 @@ if let Some(scatter) = rec.mat.scatter(r, &rec) {
 ```
 
 Much cleaner :crab:
+

@@ -7,7 +7,7 @@ mod ray;
 mod sphere;
 mod vec3;
 
-use camera::Camera;
+use crate::camera::CameraBuilder;
 use hittable::HittableList;
 use material::{Dielectric, Lambertian, Metal};
 use nalgebra::Vector3;
@@ -76,29 +76,18 @@ fn main() {
         material3,
     )));
 
-    let aspect_ratio = 16.0 / 9.0; // 16.0 / 9.0
-    let image_width = 400; // 1200
-    let samples_per_pixel = 10; // 500
-    let max_depth = 10; // 50
-    let vfov = 20.0; // 20
-    let lookfrom = Vector3::new(13.0, 2.0, 3.0);
-    let lookat = Vector3::new(0.0, 0.0, 0.0);
-    let vup = Vector3::new(0.0, 1.0, 0.0);
-    let defocus_angle = 0.6; // 0.6
-    let focus_dist = 10.0; // 10.0
-
-    let cam = Camera::new(
-        aspect_ratio,
-        image_width,
-        samples_per_pixel,
-        max_depth,
-        vfov,
-        lookfrom,
-        lookat,
-        vup,
-        defocus_angle,
-        focus_dist,
-    );
+    let cam = CameraBuilder::new()
+        .aspect_ratio(16.0 / 9.0)
+        .image_width(400)
+        .samples_per_pixel(10)
+        .max_depth(10)
+        .vfov(20.0)
+        .lookfrom(Vector3::new(13.0, 2.0, 3.0))
+        .lookat(Vector3::new(0.0, 0.0, 0.0))
+        .vup(Vector3::new(0.0, 1.0, 0.0))
+        .defocus_angle(0.6)
+        .focus_dist(10.0)
+        .build();
 
     cam.render(&mut world);
 }

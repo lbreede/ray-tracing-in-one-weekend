@@ -7,122 +7,22 @@ use nalgebra::Vector3;
 use std::time::Instant;
 
 pub struct Camera {
-    // TODO: Remove unnecessary struct members
-    // aspect_ratio: f64,
-    image_width: u32,
+    image_width: u16,
+    image_height: u16,
     samples_per_pixel: u32,
     max_depth: u32,
 
-    // vfov: f32,
-    // lookfrom: Vector3<f32>,
-    // lookat: Vector3<f32>,
-    // vup: Vector3<f32>,
     defocus_angle: f32,
-    // focus_dist: f32,
-    image_height: u32,
     pixel_samples_scale: f32,
     center: Vector3<f32>,
     pixel00_loc: Vector3<f32>,
     pixel_delta_u: Vector3<f32>,
     pixel_delta_v: Vector3<f32>,
-    // u: Vector3<f32>,
-    // v: Vector3<f32>,
-    // w: Vector3<f32>,
     defocus_disk_u: Vector3<f32>,
     defocus_disk_v: Vector3<f32>,
 }
 
-impl Default for Camera {
-    fn default() -> Self {
-        Self::new(
-            1.0,
-            100,
-            10,
-            10,
-            90.0,
-            Vector3::new(0.0, 0.0, 0.0),
-            Vector3::new(0.0, 0.0, -1.0),
-            Vector3::new(0.0, 1.0, 0.0),
-            0.0,
-            10.0,
-        )
-    }
-}
-
 impl Camera {
-    pub fn new(
-        aspect_ratio: f64,
-        image_width: u32,
-        samples_per_pixel: u32,
-        max_depth: u32,
-        vfov: f32,
-        lookfrom: Vector3<f32>,
-        lookat: Vector3<f32>,
-        vup: Vector3<f32>,
-        defocus_angle: f32,
-        focus_dist: f32,
-    ) -> Self {
-        let image_height = ((image_width as f64 / aspect_ratio) as u32).max(1);
-
-        let pixel_samples_scale = 1.0 / samples_per_pixel as f32;
-
-        let center = lookfrom;
-
-        // Determine viewport dimensions
-        let theta = vfov.to_radians();
-        let h = (theta / 2.0).tan();
-        let viewport_height = 2.0 * h * focus_dist;
-        let viewport_width = viewport_height * (image_width as f32 / image_height as f32);
-
-        let w = (lookfrom - lookat).normalize();
-        let u = vup.cross(&w).normalize();
-        let v = w.cross(&u);
-
-        let viewport_u = viewport_width * u;
-        let viewport_v = viewport_height * -v;
-
-        let pixel_delta_u = viewport_u / image_width as f32;
-        let pixel_delta_v = viewport_v / image_height as f32;
-
-        let viewport_upper_left = center - (focus_dist * w) - viewport_u / 2.0 - viewport_v / 2.0;
-        let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
-
-        // Calculate the camera defocus disk basis vectors.
-        let defocus_radius = focus_dist * (defocus_angle / 2.0).to_radians().tan();
-        let defocus_disk_u = u * defocus_radius;
-        let defocus_disk_v = v * defocus_radius;
-
-        Self {
-            // aspect_ratio,
-            image_width,
-            samples_per_pixel,
-            max_depth,
-
-            // vfov,
-            // lookfrom,
-            // lookat,
-            // vup,
-            defocus_angle,
-            // focus_dist,
-            image_height,
-            pixel_samples_scale,
-            center,
-            pixel00_loc,
-            pixel_delta_u,
-            pixel_delta_v,
-            // u,
-            // v,
-            // w,
-            defocus_disk_u,
-            defocus_disk_v,
-        }
-    }
-
-    fn defocus_disk_sample(&self) -> Vector3<f32> {
-        let p = Camera::random_in_unit_disk();
-        self.center + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
-    }
-
     pub fn render(&self, world: &mut impl Hittable) {
         eprintln!("\n=== Render Started ===\n");
         let now = Instant::now();
@@ -171,7 +71,7 @@ impl Camera {
         (1.0 - a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
     }
 
-    fn get_ray(&self, i: u32, j: u32) -> Ray {
+    fn get_ray(&self, i: u16, j: u16) -> Ray {
         let offset = Camera::sample_square();
         let pixel_sample = self.pixel00_loc
             + (i as f32 + offset.x) * self.pixel_delta_u
@@ -199,5 +99,138 @@ impl Camera {
 
     fn sample_square() -> Vector3<f32> {
         Vector3::new(random_float() - 0.5, random_float() - 0.5, 0.0)
+    }
+    fn defocus_disk_sample(&self) -> Vector3<f32> {
+        let p = Camera::random_in_unit_disk();
+        self.center + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
+    }
+}
+
+pub struct CameraBuilder {
+    aspect_ratio: f32,
+    image_width: u16,
+    samples_per_pixel: u32,
+    max_depth: u32,
+    vfov: f32,
+    lookfrom: Vector3<f32>,
+    lookat: Vector3<f32>,
+    vup: Vector3<f32>,
+    defocus_angle: f32,
+    focus_dist: f32,
+}
+
+impl CameraBuilder {
+    // Create a new builder with default values
+    pub fn new() -> Self {
+        Self {
+            aspect_ratio: 16.0 / 9.0,
+            image_width: 400,
+            samples_per_pixel: 10,
+            max_depth: 10,
+            vfov: 20.0,
+            lookfrom: Vector3::new(13.0, 2.0, 3.0),
+            lookat: Vector3::new(0.0, 0.0, 0.0),
+            vup: Vector3::new(0.0, 1.0, 0.0),
+            defocus_angle: 0.6,
+            focus_dist: 10.0,
+        }
+    }
+
+    // Setters for each field to allow customization
+    pub fn aspect_ratio(mut self, aspect_ratio: f32) -> Self {
+        self.aspect_ratio = aspect_ratio;
+        self
+    }
+
+    pub fn image_width(mut self, image_width: u16) -> Self {
+        self.image_width = image_width;
+        self
+    }
+
+    pub fn samples_per_pixel(mut self, samples_per_pixel: u32) -> Self {
+        self.samples_per_pixel = samples_per_pixel;
+        self
+    }
+
+    pub fn max_depth(mut self, max_depth: u32) -> Self {
+        self.max_depth = max_depth;
+        self
+    }
+
+    pub fn vfov(mut self, vfov: f32) -> Self {
+        self.vfov = vfov;
+        self
+    }
+
+    pub fn lookfrom(mut self, lookfrom: Vector3<f32>) -> Self {
+        self.lookfrom = lookfrom;
+        self
+    }
+
+    pub fn lookat(mut self, lookat: Vector3<f32>) -> Self {
+        self.lookat = lookat;
+        self
+    }
+
+    pub fn vup(mut self, vup: Vector3<f32>) -> Self {
+        self.vup = vup;
+        self
+    }
+
+    pub fn defocus_angle(mut self, defocus_angle: f32) -> Self {
+        self.defocus_angle = defocus_angle;
+        self
+    }
+
+    pub fn focus_dist(mut self, focus_dist: f32) -> Self {
+        self.focus_dist = focus_dist;
+        self
+    }
+
+    // Build method to create the Camera object
+    pub fn build(self) -> Camera {
+        let image_height = ((self.image_width as f32 / self.aspect_ratio) as u16).max(1);
+        let pixel_samples_scale = 1.0 / self.samples_per_pixel as f32;
+        let center = self.lookfrom;
+
+        // Determine viewport dimensions
+        let theta = self.vfov.to_radians();
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h * self.focus_dist;
+        let viewport_width = viewport_height * (self.image_width as f32 / image_height as f32);
+
+        let w = (self.lookfrom - self.lookat).normalize();
+        let u = self.vup.cross(&w).normalize();
+        let v = w.cross(&u);
+
+        let viewport_u = viewport_width * u;
+        let viewport_v = viewport_height * -v;
+
+        let pixel_delta_u = viewport_u / self.image_width as f32;
+        let pixel_delta_v = viewport_v / image_height as f32;
+
+        let viewport_upper_left =
+            center - (self.focus_dist * w) - viewport_u / 2.0 - viewport_v / 2.0;
+        let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+        // Calculate the camera defocus disk basis vectors
+        let defocus_radius = self.focus_dist * (self.defocus_angle / 2.0).to_radians().tan();
+        let defocus_disk_u = u * defocus_radius;
+        let defocus_disk_v = v * defocus_radius;
+
+        Camera {
+            image_width: self.image_width,
+            image_height,
+            samples_per_pixel: self.samples_per_pixel,
+            max_depth: self.max_depth,
+            defocus_angle: self.defocus_angle,
+            pixel_samples_scale,
+            center,
+            pixel00_loc,
+            pixel_delta_u,
+            pixel_delta_v,
+            defocus_disk_u,
+            defocus_disk_v,
+        }
     }
 }

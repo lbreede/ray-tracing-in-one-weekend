@@ -1,3 +1,14 @@
+use std::sync::Arc;
+
+use nalgebra::Vector3;
+
+use hittable::HittableList;
+use material::{Dielectric, Lambertian, Metal};
+use sphere::Sphere;
+use vec3::{random_float, random_float_range, random_vector, random_vector_range};
+
+use crate::camera::CameraBuilder;
+
 mod camera;
 mod color;
 mod hittable;
@@ -6,14 +17,6 @@ mod material;
 mod ray;
 mod sphere;
 mod vec3;
-
-use crate::camera::CameraBuilder;
-use hittable::HittableList;
-use material::{Dielectric, Lambertian, Metal};
-use nalgebra::Vector3;
-use sphere::Sphere;
-use std::sync::Arc;
-use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
 fn test_scene(world: &mut HittableList) {
     for a in -11..11 {
@@ -57,7 +60,7 @@ fn main() {
         ground_material,
     )));
 
-    // test_scene(&mut world);
+    test_scene(&mut world);
 
     let material1 = Arc::new(Dielectric::new(1.5));
     world.add(Box::new(Sphere::new(
@@ -82,8 +85,8 @@ fn main() {
 
     let cam = CameraBuilder::new()
         .aspect_ratio(16.0 / 9.0)
-        .image_width(1200)
-        .samples_per_pixel(500)
+        .image_width(400)
+        .samples_per_pixel(100)
         .max_depth(50)
         .vfov(20.0)
         .lookfrom(Vector3::new(13.0, 2.0, 3.0))

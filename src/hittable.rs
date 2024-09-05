@@ -1,8 +1,10 @@
+use std::sync::Arc;
+
+use nalgebra::Vector3;
+
 use crate::interval::Interval;
 use crate::material::Material;
 use crate::ray::Ray;
-use nalgebra::Vector3;
-use std::sync::Arc;
 
 pub struct HitRecord {
     pub p: Vector3<f32>,
@@ -26,7 +28,7 @@ impl HitRecord {
     ///
     /// NOTE: the parameter `outward_normal` is assumed to have unit length.
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: Vector3<f32>) {
-        self.front_face = r.direction.dot(&outward_normal) < 0.0;
+        self.front_face = r.direction().dot(&outward_normal) < 0.0;
         self.normal = if self.front_face {
             outward_normal
         } else {

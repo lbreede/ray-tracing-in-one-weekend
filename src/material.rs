@@ -1,7 +1,8 @@
+use nalgebra::Vector3;
+
 use crate::hittable::HitRecord;
 use crate::ray::Ray;
 use crate::vec3::random_vector_range;
-use nalgebra::Vector3;
 
 pub struct ScatterResult {
     pub attenuation: Vector3<f32>,
@@ -50,11 +51,11 @@ impl Metal {
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterResult> {
-        let mut reflected = reflect(&r_in.direction, &rec.normal);
+        let mut reflected = reflect(&r_in.direction(), &rec.normal);
         reflected = reflected.normalize() + self.fuzz * random_unit_vector();
 
         Some(Ray::new(rec.p, reflected))
-            .filter(|ray| ray.direction.dot(&rec.normal) > 0.0)
+            .filter(|ray| ray.direction().dot(&rec.normal) > 0.0)
             .map(|scattered| ScatterResult {
                 attenuation: self.albedo,
                 scattered,
@@ -88,7 +89,7 @@ impl Material for Dielectric {
             self.refraction_index
         };
 
-        let unit_direction = r_in.direction.normalize();
+        let unit_direction = r_in.direction().normalize();
         let cos_theta = -unit_direction.dot(&rec.normal).min(1.0);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
@@ -110,6 +111,7 @@ impl Material for Dielectric {
 fn reflect(v: &Vector3<f32>, n: &Vector3<f32>) -> Vector3<f32> {
     v - 2.0 * v.dot(n) * n
 }
+
 fn refract(uv: &Vector3<f32>, n: &Vector3<f32>, etai_over_etat: f32) -> Vector3<f32> {
     let cos_theta = -uv.dot(n).min(1.0);
     let r_out_perp = etai_over_etat * (uv + cos_theta * n);
@@ -126,6 +128,7 @@ fn random_unit_vector() -> Vector3<f32> {
         }
     }
 }
+
 /// Return `true` if the vector is close to zero in all dimensions.
 fn near_zero(v: &Vector3<f32>) -> bool {
     const S: f32 = 1e-8;

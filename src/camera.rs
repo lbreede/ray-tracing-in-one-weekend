@@ -1,10 +1,12 @@
+use std::time::Instant;
+
+use nalgebra::Vector3;
+
 use crate::color::write_color;
 use crate::hittable::Hittable;
 use crate::interval::Interval;
 use crate::ray::Ray;
 use crate::vec3::{random_float, random_float_range};
-use nalgebra::Vector3;
-use std::time::Instant;
 
 pub struct Camera {
     image_width: u16,
@@ -67,7 +69,7 @@ impl Camera {
             return Vector3::new(0.0, 0.0, 0.0);
         }
 
-        let unit_direction = r.direction.normalize();
+        let unit_direction = r.direction().normalize();
         let a = 0.5 * (unit_direction.y + 1.0);
         (1.0 - a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
     }

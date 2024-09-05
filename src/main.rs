@@ -78,9 +78,9 @@ fn main() {
 
     let cam = CameraBuilder::new()
         .aspect_ratio(16.0 / 9.0)
-        .image_width(400)
-        .samples_per_pixel(10)
-        .max_depth(10)
+        .image_width(1200)
+        .samples_per_pixel(500)
+        .max_depth(50)
         .vfov(20.0)
         .lookfrom(Vector3::new(13.0, 2.0, 3.0))
         .lookat(Vector3::new(0.0, 0.0, 0.0))

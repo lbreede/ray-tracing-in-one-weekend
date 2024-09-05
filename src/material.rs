@@ -63,6 +63,8 @@ impl Material for Metal {
 }
 
 pub struct Dielectric {
+    /// Refractive index in vacuum or air, or the ratio of the material's refractive index over the
+    /// refractive index of the enclosing media
     refraction_index: f32,
 }
 
@@ -70,6 +72,7 @@ impl Dielectric {
     pub fn new(refraction_index: f32) -> Self {
         Self { refraction_index }
     }
+    /// Use Schlick's approximation for reflectance.
     fn reflectance(cosine: f32, refraction_index: f32) -> f32 {
         let mut r0 = (1.0 - refraction_index) / (1.0 + refraction_index);
         r0 = r0 * r0;
@@ -123,6 +126,7 @@ fn random_unit_vector() -> Vector3<f32> {
         }
     }
 }
+/// Return `true` if the vector is close to zero in all dimensions.
 fn near_zero(v: &Vector3<f32>) -> bool {
     const S: f32 = 1e-8;
     v.x.abs() < S && v.y.abs() < S && v.z.abs() < S

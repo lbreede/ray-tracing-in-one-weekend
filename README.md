@@ -14,7 +14,7 @@
 - [x] Refactor the `Material` trait so that `scatter()` returns an `Option` rather than a `bool`
 - [x] Consider using an `Arc` instead of a `Box` for materials and hittables
 - [x] Add trait declaration `Send + Sync`
-- [ ] Reduce amount of method arguments, possibly using the builder pattern
+- [x] Reduce amount of method arguments, possibly using the builder pattern
 
 ## Learnings
 

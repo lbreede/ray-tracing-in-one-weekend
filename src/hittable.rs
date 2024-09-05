@@ -40,7 +40,7 @@ pub trait Hittable {
 }
 
 pub struct HittableList {
-    objects: Vec<Arc<dyn Hittable>>,
+    objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -50,7 +50,7 @@ impl HittableList {
         }
     }
 
-    pub fn add(&mut self, object: Arc<dyn Hittable>) {
+    pub fn add(&mut self, object: Box<dyn Hittable>) {
         self.objects.push(object);
     }
 }

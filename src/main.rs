@@ -57,7 +57,7 @@ fn main() {
         ground_material,
     )));
 
-    test_scene(&mut world);
+    // test_scene(&mut world);
 
     let material1 = Arc::new(Dielectric::new(1.5));
     world.add(Box::new(Sphere::new(

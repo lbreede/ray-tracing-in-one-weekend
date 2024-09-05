@@ -16,6 +16,7 @@
 - [x] Add trait declaration `Send + Sync`
 - [x] Reduce amount of method arguments, possibly using the builder pattern
 - [ ] Multi-thread using `rayon`
+- [ ] Reconsider need for an `Interval` struct
 
 ## Learnings
 

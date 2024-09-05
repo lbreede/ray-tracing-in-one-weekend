@@ -72,7 +72,7 @@ impl Camera {
         (1.0 - a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
     }
 
-    /// Construct a camera ray originating from the defocus disk and directed at a randomly sampled 
+    /// Construct a camera ray originating from the defocus disk and directed at a randomly sampled
     /// point around the pixel location i, j.
     fn get_ray(&self, i: u16, j: u16) -> Ray {
         let offset = Camera::sample_square();

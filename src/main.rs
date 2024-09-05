@@ -8,6 +8,7 @@ use sphere::Sphere;
 use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
 use crate::camera::CameraBuilder;
+use crate::cube::Cube;
 
 mod camera;
 mod color;
@@ -17,6 +18,7 @@ mod material;
 mod ray;
 mod sphere;
 mod vec3;
+mod cube;
 
 fn test_scene(world: &mut HittableList) {
     for a in -11..11 {
@@ -33,17 +35,17 @@ fn test_scene(world: &mut HittableList) {
                     // diffuse
                     let albedo = random_vector().component_mul(&random_vector());
                     let sphere_material = Arc::new(Lambertian::new(albedo));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Box::new(Cube::new(center, 0.2 * 2.0, sphere_material)));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = random_vector_range(0.5, 1.0);
                     let fuzz = random_float_range(0.0, 0.5);
                     let sphere_material = Arc::new(Metal::new(albedo, fuzz));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Box::new(Cube::new(center, 0.2 * 2.0, sphere_material)));
                 } else {
                     // glass
                     let sphere_material = Arc::new(Dielectric::new(1.5));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Box::new(Cube::new(center, 0.2 * 2.0, sphere_material)));
                 }
             }
         }
@@ -62,26 +64,34 @@ fn main() {
 
     test_scene(&mut world);
 
-    let material1 = Arc::new(Dielectric::new(1.5));
-    world.add(Box::new(Sphere::new(
-        Vector3::new(0.0, 1.0, 0.0),
-        1.0,
-        material1,
-    )));
 
-    let material2 = Arc::new(Lambertian::new(Vector3::new(0.4, 0.2, 0.1)));
-    world.add(Box::new(Sphere::new(
-        Vector3::new(-4.0, 1.0, 0.0),
-        1.0,
-        material2,
-    )));
+    // let material1 = Arc::new(Dielectric::new(1.5));
+    // world.add(Box::new(Sphere::new(
+    //     Vector3::new(0.0, 1.0, 0.0),
+    //     1.0,
+    //     material1,
+    // )));
+    //
+    // let material2 = Arc::new(Lambertian::new(Vector3::new(0.4, 0.2, 0.1)));
+    // world.add(Box::new(Sphere::new(
+    //     Vector3::new(-4.0, 1.0, 0.0),
+    //     1.0,
+    //     material2,
+    // )));
 
-    let material3 = Arc::new(Metal::new(Vector3::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Box::new(Sphere::new(
-        Vector3::new(4.0, 1.0, 0.0),
-        1.0,
-        material3,
-    )));
+    // world.add(Box::new(Cube::new(
+    //     Vector3::new(-4.0, 1.0, 0.0),
+    //     2.0,
+    //     material2,
+    // )));
+
+    //
+    // let material3 = Arc::new(Metal::new(Vector3::new(0.7, 0.6, 0.5), 0.0));
+    // world.add(Box::new(Sphere::new(
+    //     Vector3::new(4.0, 1.0, 0.0),
+    //     1.0,
+    //     material3,
+    // )));
 
     let cam = CameraBuilder::new()
         .aspect_ratio(16.0 / 9.0)

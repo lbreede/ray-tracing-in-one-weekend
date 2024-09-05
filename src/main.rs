@@ -15,16 +15,7 @@ use sphere::Sphere;
 use std::sync::Arc;
 use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
-fn main() {
-    let mut world = HittableList::new();
-
-    let ground_material = Arc::new(Lambertian::new(Vector3::new(0.5, 0.5, 0.5)));
-    world.add(Box::new(Sphere::new(
-        Vector3::new(0.0, -1000.0, 0.0),
-        1000.0,
-        ground_material,
-    )));
-
+fn test_scene(world: &mut HittableList) {
     for a in -11..11 {
         for b in -11..11 {
             let choose_mat = random_float();
@@ -54,6 +45,19 @@ fn main() {
             }
         }
     }
+}
+
+fn main() {
+    let mut world = HittableList::new();
+
+    let ground_material = Arc::new(Lambertian::new(Vector3::new(0.5, 0.5, 0.5)));
+    world.add(Box::new(Sphere::new(
+        Vector3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    test_scene(&mut world);
 
     let material1 = Arc::new(Dielectric::new(1.5));
     world.add(Box::new(Sphere::new(

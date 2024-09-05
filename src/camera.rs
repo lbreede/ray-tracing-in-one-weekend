@@ -51,6 +51,7 @@ impl Camera {
         eprintln!("Render Time: {:.2?}\n", elapsed);
     }
     fn ray_color(r: &Ray, depth: u32, world: &mut impl Hittable) -> Vector3<f32> {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
         if depth == 0 {
             return Vector3::new(0.0, 0.0, 0.0);
         }
@@ -71,6 +72,8 @@ impl Camera {
         (1.0 - a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
     }
 
+    /// Construct a camera ray originating from the defocus disk and directed at a randomly sampled 
+    /// point around the pixel location i, j.
     fn get_ray(&self, i: u16, j: u16) -> Ray {
         let offset = Camera::sample_square();
         let pixel_sample = self.pixel00_loc
@@ -100,6 +103,7 @@ impl Camera {
     fn sample_square() -> Vector3<f32> {
         Vector3::new(random_float() - 0.5, random_float() - 0.5, 0.0)
     }
+    /// Returns a random point in the camera defocus disk.
     fn defocus_disk_sample(&self) -> Vector3<f32> {
         let p = Camera::random_in_unit_disk();
         self.center + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
@@ -199,16 +203,20 @@ impl CameraBuilder {
         let viewport_height = 2.0 * h * self.focus_dist;
         let viewport_width = viewport_height * (self.image_width as f32 / image_height as f32);
 
+        // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
         let w = (self.lookfrom - self.lookat).normalize();
         let u = self.vup.cross(&w).normalize();
         let v = w.cross(&u);
 
+        // Calculate the vectors across the horizontal and down the vertical viewport edges.
         let viewport_u = viewport_width * u;
         let viewport_v = viewport_height * -v;
 
+        // Calculate the horizontal and vertical delta vectors to the next pixel.
         let pixel_delta_u = viewport_u / self.image_width as f32;
         let pixel_delta_v = viewport_v / image_height as f32;
 
+        // Calculate the location of the upper left pixel.
         let viewport_upper_left =
             center - (self.focus_dist * w) - viewport_u / 2.0 - viewport_v / 2.0;
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);

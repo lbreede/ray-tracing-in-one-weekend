@@ -14,9 +14,9 @@ mod color;
 mod hittable;
 mod interval;
 mod material;
+mod random_utils;
 mod ray;
 mod sphere;
-mod random_utils;
 
 fn test_scene(world: &mut HittableList) {
     for a in -11..11 {

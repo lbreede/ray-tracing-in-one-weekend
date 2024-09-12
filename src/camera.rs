@@ -5,8 +5,8 @@ use nalgebra::Vector3;
 use crate::color::write_color;
 use crate::hittable::Hittable;
 use crate::interval::Interval;
+use crate::random_utils::{random_float, random_float_range};
 use crate::ray::Ray;
-use crate::vec3::{random_float, random_float_range};
 
 pub struct Camera {
     image_width: u16,

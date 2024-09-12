@@ -1,8 +1,8 @@
 use nalgebra::Vector3;
 
 use crate::hittable::HitRecord;
+use crate::random_utils::random_vector_range;
 use crate::ray::Ray;
-use crate::vec3::random_vector_range;
 
 pub struct ScatterResult {
     pub attenuation: Vector3<f32>,

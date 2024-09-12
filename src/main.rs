@@ -4,8 +4,8 @@ use nalgebra::Vector3;
 
 use hittable::HittableList;
 use material::{Dielectric, Lambertian, Metal};
+use random_utils::{random_float, random_float_range, random_vector, random_vector_range};
 use sphere::Sphere;
-use vec3::{random_float, random_float_range, random_vector, random_vector_range};
 
 use crate::camera::CameraBuilder;
 
@@ -16,7 +16,7 @@ mod interval;
 mod material;
 mod ray;
 mod sphere;
-mod vec3;
+mod random_utils;
 
 fn test_scene(world: &mut HittableList) {
     for a in -11..11 {
